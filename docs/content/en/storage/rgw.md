@@ -45,6 +45,37 @@ The steps in this guide have been tested with the following versions:
 |                                    | Version  |
 |------------------------------------|----------|
 | openstackclient                    | v6.2.0   |
+| openstackclient                    | v6.6.0   |
+
+## Storage Placements
+
+We offer two different kind of storage placements, which represent different backend types:
+
+{{% alert color="info" %}}
+
+It is important, that you need to select the correct placement, if it should not be in default-placement, on bucket creation time.
+It can not be changed afterwards.
+
+s3cmd example:
+
+s3cmd mb --bucket-location=":<PLACEMENT>" s3://my-test-bucket
+
+openstack example:
+
+openstack container create --storage-policy <PLACEMENT> my-test-bucket
+
+{{% /alert %}}
+
+| Placement                          | Backend Type    |  Cloud Points  | Information                                    | 
+|------------------------------------|-----------------|----------------|------------------------------------------------|
+| default-placement                  | MIXED HDD+FLASH | 1 per GB/Month | Should be best for most usecases               | 
+| express-onezone-placement          | FLASH Only      | 4 per GB/Month | Experimental, high performance, limited access |
+
+{{% alert color="warning" %}}
+
+Please be aware, that "express-onezone-placement" is experimental for now and we may set a quota of 10TB on your bucket.
+
+{{% /alert %}}
 
 ## Access the Wavestack dashboard
 
@@ -68,8 +99,11 @@ or an S3 API-compatible tool.
 
 For more detailed information on the features of the S3-API,
 please refer to [Ceph S3 Documentation](https://docs.ceph.com/en/latest/radosgw/s3/).
-This includes instructions on how to use advanced features such as object lock/immutability/worm,
-which can be crucial for implementing compliance and data retention policies.
+This includes instructions on how to use advanced features such as object lock, immutability, 
+and WORM, which can be crucial for implementing compliance and data retention policies.
+
+{{% alert color="info" %}} Some clients (like GitLab) and SDKs need the signature version of 
+the S3-API hard-set to 2 on the client's side to ensure maximal compatibility.{{% /alert %}}
 
 ### EC2 Credentials
 
